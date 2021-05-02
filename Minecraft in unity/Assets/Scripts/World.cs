@@ -22,6 +22,7 @@ public class World : MonoBehaviour
     GameObject player;
     Vector2 lastPlayerPosition;
     Vector2 currentPlayerPosition;
+    private SaveManager _manager;
 
 
     public static Dictionary<BlockType.Type, BlockType> blockTypes = new Dictionary<BlockType.Type, BlockType>();
@@ -31,6 +32,7 @@ public class World : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player");
         player.SetActive(false);
         UpdatePlayerPosition();
+        _manager = GameObject.Find("GameManager").GetComponent<SaveManager>();
     }
 
     void Start()
@@ -41,7 +43,7 @@ public class World : MonoBehaviour
         material.mainTexture = atlas; ;
         /*material.SetTexture("_BaseColorMap", atlas);*/
         material.SetFloat("_Metallic", 0f);
-        material.SetFloat("_Smoothness", 0f);
+        material.SetFloat("_Glossiness", 0f);
         blockMaterial[0] = material;
 
         Texture2D transparentAtlas = GetTextureAtlas(true);
@@ -154,6 +156,10 @@ public class World : MonoBehaviour
 
     public void GenerateLoadedWorld(List<ChunkData> chunksData)
     {
+        foreach (ChunkData data in chunksData)
+        {
+            Debug.Log(data.Name);
+        }
         chunks.Clear();
         lastPlayerPosition = Vector3.negativeInfinity;
         player.SetActive(false);
@@ -179,6 +185,7 @@ public class World : MonoBehaviour
                         chunk = new Chunk(chunkName, chunkPosition, blockMaterial, chunkData.Blocks);
                         chunk.chunkObject.transform.parent = this.transform;
                         chunks.Add(chunkName, chunk);
+                        
                     }
                 }
             }

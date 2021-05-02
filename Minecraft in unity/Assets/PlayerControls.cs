@@ -121,6 +121,14 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Movement"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""10c42366-71fc-4abf-8660-2cf029d0375e"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -387,6 +395,72 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""action"": ""View"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""Keyboard"",
+                    ""id"": ""318f4d2f-98aa-4588-8945-2a2a0a21ea51"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Movement"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""47c2d68d-5c65-457f-a901-517720c94a5e"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Movement"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""9ae0e71f-c6af-4ee2-80bd-0f2363c7b2ff"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Movement"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""e75f3017-0ecd-4e98-bb62-5a9bf9319429"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Movement"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""57ce576a-7de6-412c-aa4d-803e2ada0e46"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Movement"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e1b4b093-952a-4711-9ebe-b75894f18184"",
+                    ""path"": ""<Gamepad>/leftStick"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Movement"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -408,6 +482,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         m_Gameplay_ViewLeft = m_Gameplay.FindAction("ViewLeft", throwIfNotFound: true);
         m_Gameplay_ViewRight = m_Gameplay.FindAction("ViewRight", throwIfNotFound: true);
         m_Gameplay_View = m_Gameplay.FindAction("View", throwIfNotFound: true);
+        m_Gameplay_Movement = m_Gameplay.FindAction("Movement", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -470,6 +545,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     private readonly InputAction m_Gameplay_ViewLeft;
     private readonly InputAction m_Gameplay_ViewRight;
     private readonly InputAction m_Gameplay_View;
+    private readonly InputAction m_Gameplay_Movement;
     public struct GameplayActions
     {
         private @PlayerControls m_Wrapper;
@@ -487,6 +563,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         public InputAction @ViewLeft => m_Wrapper.m_Gameplay_ViewLeft;
         public InputAction @ViewRight => m_Wrapper.m_Gameplay_ViewRight;
         public InputAction @View => m_Wrapper.m_Gameplay_View;
+        public InputAction @Movement => m_Wrapper.m_Gameplay_Movement;
         public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -535,6 +612,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @View.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnView;
                 @View.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnView;
                 @View.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnView;
+                @Movement.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnMovement;
+                @Movement.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnMovement;
+                @Movement.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnMovement;
             }
             m_Wrapper.m_GameplayActionsCallbackInterface = instance;
             if (instance != null)
@@ -578,6 +658,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @View.started += instance.OnView;
                 @View.performed += instance.OnView;
                 @View.canceled += instance.OnView;
+                @Movement.started += instance.OnMovement;
+                @Movement.performed += instance.OnMovement;
+                @Movement.canceled += instance.OnMovement;
             }
         }
     }
@@ -597,5 +680,6 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         void OnViewLeft(InputAction.CallbackContext context);
         void OnViewRight(InputAction.CallbackContext context);
         void OnView(InputAction.CallbackContext context);
+        void OnMovement(InputAction.CallbackContext context);
     }
 }
