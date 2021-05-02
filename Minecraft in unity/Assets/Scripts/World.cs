@@ -10,6 +10,7 @@ public class World : MonoBehaviour
     public Texture2D[] atlasTransparentTextures;
     public static Dictionary<string, Rect> atlasDictionary = new Dictionary<string, Rect>();
     public static Dictionary<string, Chunk> chunks = new Dictionary<string, Chunk>();
+    public static Dictionary<string, Chunk> modChunks = new Dictionary<string, Chunk>();
 
     
     
@@ -81,6 +82,7 @@ public class World : MonoBehaviour
         Chunk chunk;
         if(chunks.TryGetValue(chunkName, out chunk))
         {
+            if(!modChunks.TryGetValue(chunkName, out Chunk f)) modChunks.Add(chunkName, chunk);
             chunk.DestroyBlock(blockPosition);
         }
     }

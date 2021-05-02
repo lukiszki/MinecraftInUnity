@@ -18,6 +18,7 @@ public class Chunk
     public List<int> waterTriangles = new List<int>();
     public List<Vector2> uvs = new List<Vector2>();
     public static List<Vector3> waterBlocks = new List<Vector3>();
+    private Sounds _sounds;
 
     public Chunk(string name, Vector3 position, Material[] material)
     {
@@ -25,6 +26,7 @@ public class Chunk
         this.chunkObject.transform.position = position;
         this.blockMaterial = material;
         this.status = chunkStatus.GENERATED;
+        _sounds = GameObject.Find("SoundManager").GetComponent<Sounds>();
         GenerateChunk(16);
     }
 
@@ -34,6 +36,7 @@ public class Chunk
         this.chunkObject.transform.position = position;
         this.blockMaterial = material;
         this.status = chunkStatus.GENERATED;
+        _sounds = GameObject.Find("SoundManager").GetComponent<Sounds>();
         GenerateLoadedChunk(16, blockTypes);
     }
 
@@ -220,6 +223,7 @@ public class Chunk
         Block block = chunkBlocks[(int) blockPosition.x, (int) blockPosition.y, (int) blockPosition.z];
         if (block.GetBlockType() == World.blockTypes[BlockType.Type.BEDROCK] ||
             block.GetBlockType() == World.blockTypes[BlockType.Type.WATER]) return;
+        _sounds.DestroyBlockSound(block.GetBlockType().name.ToString());
         block.SetBlockType(World.blockTypes[BlockType.Type.AIR]);
         RedrawChunk(World.chunkSize);
         if (blockPosition.x == 0) RedrawNeighbourChunk(new Vector3(-16,0));

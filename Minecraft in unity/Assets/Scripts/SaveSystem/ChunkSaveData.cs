@@ -15,7 +15,7 @@ public class ChunkSaveData : MonoBehaviour
     
     private void BuildChunkData()
     {
-        foreach (var chunk in World.chunks)
+        foreach (var chunk in World.modChunks)
         {
             var chunkData = new ChunkData(chunk.Key, chunk.Value.GetBlockTypes());
             ChunkData.Add(chunkData);
