@@ -17,6 +17,12 @@ public class Sounds : MonoBehaviour
     
     [SerializeField]
     private AudioClip[] woodSound;
+    
+    [SerializeField]
+    private AudioClip[] sandSound;
+    
+    [SerializeField]
+    private AudioClip[] snowSound;
    void Start()
    {
        source = GetComponent<AudioSource>();
@@ -28,6 +34,7 @@ public class Sounds : MonoBehaviour
    // Update is called once per frame
     public void DestroyBlockSound(string type)
     {
+       // Debug.Log(type);
         switch (type)
         {
             case "grass": //World.blockTypes[BlockType.Type.DIRT]:
@@ -38,6 +45,15 @@ public class Sounds : MonoBehaviour
                 break;
             case "wooden":
                 PlaySound(woodSound);
+                break;
+            case "snow":
+                PlaySound(snowSound);
+                break;
+            case "stone":
+                PlaySound(stoneSound);
+                break;
+            case "sand":
+                PlaySound(sandSound);
                 break;
             default:
                 PlaySound(stoneSound);
