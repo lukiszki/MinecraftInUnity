@@ -461,7 +461,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3da4ca817edc09f4f82bbc3aea229b6d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mouseSensitivity: 200
+  mouseSensitivity: 100
 --- !u!1 &557422864
 GameObject:
   m_ObjectHideFlags: 0
@@ -1122,6 +1122,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1e9a15952aa18e43b394aab05fcb775, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectedBlockType: 0
   _maskToIgnore:
     serializedVersion: 2
     m_Bits: 256
@@ -1419,7 +1420,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0cfe563e8fddde468b08e1fc80458ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 50
+  speed: 5
   gravity: -30
   jumpHeight: 1.7
   groundCheck: {fileID: 1462340193}
@@ -1439,6 +1440,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1e9a15952aa18e43b394aab05fcb775, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectedBlockType: 2
   _maskToIgnore:
     serializedVersion: 2
     m_Bits: 256

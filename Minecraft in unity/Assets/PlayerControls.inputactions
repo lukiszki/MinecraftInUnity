@@ -116,6 +116,14 @@
                     "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": ""
+                },
+                {
+                    "name": "PlaceBlock",
+                    "type": "Button",
+                    "id": "c01253b7-5f1b-4e3a-b154-55dfa3edc300",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
                 }
             ],
             "bindings": [
@@ -144,7 +152,7 @@
                 {
                     "name": "",
                     "id": "40cffa80-4314-4fff-894c-9e08b872d64c",
-                    "path": "<Gamepad>/buttonWest",
+                    "path": "<Gamepad>/leftShoulder",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -446,6 +454,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "Movement",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5989f241-e375-40f5-9a23-dedbf152c479",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PlaceBlock",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c6ac23b4-c866-4619-a4d2-844083fb09aa",
+                    "path": "<Gamepad>/rightShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PlaceBlock",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

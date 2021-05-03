@@ -211,7 +211,7 @@ public class Chunk
        
     }
 
-    public void DestroyBlock(Vector3 blockPosition)
+    public void ChangeBlockType(Vector3 blockPosition, BlockType blockType)
     {
         if (blockPosition.x >= World.chunkSize || blockPosition.x < 0 ||
             blockPosition.y >= World.chunkSize || blockPosition.y < 0 ||
@@ -224,7 +224,7 @@ public class Chunk
         if (block.GetBlockType() == World.blockTypes[BlockType.Type.BEDROCK] ||
             block.GetBlockType() == World.blockTypes[BlockType.Type.WATER]) return;
         _sounds.DestroyBlockSound(block.GetBlockType().name.ToString());
-        block.SetBlockType(World.blockTypes[BlockType.Type.AIR]);
+        block.SetBlockType(blockType);
         RedrawChunk(World.chunkSize);
         if (blockPosition.x == 0) RedrawNeighbourChunk(new Vector3(-16,0));
         if (blockPosition.x == World.chunkSize - 1) RedrawNeighbourChunk(new Vector3(16, 0));
