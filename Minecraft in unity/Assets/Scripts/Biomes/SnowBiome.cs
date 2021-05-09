@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SnowBiome : Biome
 {
-    protected override BlockType GenerateSurface()
+    protected override BlockType GenerateSurface(float x, float y, float z, Vector3 chunkPos)
     {
         return World.blockTypes[BlockType.Type.SNOW];
     }

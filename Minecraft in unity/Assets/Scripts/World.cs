@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-
+using System.Threading;
+using UnityEngine.Assertions.Must;
 
 public class World : MonoBehaviour
 {
@@ -11,6 +12,9 @@ public class World : MonoBehaviour
     public static Dictionary<string, Rect> atlasDictionary = new Dictionary<string, Rect>();
     public static Dictionary<string, Chunk> chunks = new Dictionary<string, Chunk>();
     public static Dictionary<string, Chunk> modChunks = new Dictionary<string, Chunk>();
+    
+    
+    public static Queue<VoxelMod> modifications = new Queue<VoxelMod>();
 
     
     
@@ -41,7 +45,7 @@ public class World : MonoBehaviour
         Texture2D atlas = GetTextureAtlas();
         Material material = new Material(Shader.Find("Standard"));
         atlas.filterMode = FilterMode.Point;
-        material.mainTexture = atlas; ;
+        material.mainTexture = atlas; 
         /*material.SetTexture("_BaseColorMap", atlas);*/
         material.SetFloat("_Metallic", 0f);
         material.SetFloat("_Glossiness", 0f);
@@ -58,12 +62,14 @@ public class World : MonoBehaviour
         blockMaterial[1] = transparentMaterial;
 
 
-       // Application.targetFrameRate = 70;
-       // RenderSettings.ambientLight = Color.white * lightIntensity;
+       Application.targetFrameRate = 70;
+
         ChunkUtils.GenerateRandomOffset();
         GenerateBlockTypes();
+
         GenerateWorld();
         StartCoroutine(BuildWorld());
+
     }
     private void Update()
     {
@@ -72,9 +78,13 @@ public class World : MonoBehaviour
         if (lastPlayerPosition != currentPlayerPosition)
         {
             lastPlayerPosition = currentPlayerPosition;
+            if (modifications.Count > 0)
+                ApplyModifications();
             GenerateWorld();
             StartCoroutine(BuildWorld());
+
         }
+
     }
     
     public void BuildBlock(string chunkName, Vector3 blockPosition, BlockType.Type blockType)
@@ -95,6 +105,7 @@ public class World : MonoBehaviour
             if(!modChunks.TryGetValue(chunkName, out Chunk f)) modChunks.Add(chunkName, chunk);
             chunk.ChangeBlockType(blockPosition, World.blockTypes[BlockType.Type.AIR]);
         }
+
     }
 
     //funkcja generuje nazwe chunka
@@ -117,8 +128,12 @@ public class World : MonoBehaviour
         }
 
         if (!player.activeInHierarchy)
-        {
+        { 
             player.SetActive(true);
+
+
+          ApplyModifications();
+
         }
 
     }
@@ -143,6 +158,7 @@ public class World : MonoBehaviour
                             chunk.status = Chunk.chunkStatus.GENERATED;
                             Destroy(chunk.chunkObject);
                         }
+                        
 
                         continue;
                     }
@@ -153,6 +169,7 @@ public class World : MonoBehaviour
                         {
                             chunk.RefreshChunk(chunkName, chunkPosition);
                             chunk.chunkObject.transform.parent = this.transform;
+
                         }
                     }
                     else
@@ -160,10 +177,15 @@ public class World : MonoBehaviour
                         chunk = new Chunk(chunkName, chunkPosition, blockMaterial);
                         chunk.chunkObject.transform.parent = this.transform;
                         chunks.Add(chunkName, chunk);
+
                     }
+
                 }
             }
-        }
+        }            
+
+        
+
     }
 
     public void GenerateLoadedWorld(List<ChunkData> chunksData)
@@ -203,6 +225,53 @@ public class World : MonoBehaviour
             }
         }
     }
+
+    void ApplyModifications()
+    {
+        List<string> chunkss = new List<string>();
+        int count = 0;
+        while (modifications.Count > 0)
+        {
+            Chunk chunk;
+            VoxelMod v = modifications.Dequeue();
+            string chunkName = GenerateChunkName(v.chunkPos);
+
+            if(chunks.TryGetValue(chunkName, out chunk))
+            {
+               
+              //  chunk.ChangeBlockType(v.position,v.type);
+                chunk.chunkBlocks[(int) v.position.x, (int) v.position.y, (int) v.position.z]  = new Block(v.type,chunk, v.position);
+                //chunk.DrawChunk(chunkSize);
+                chunk.status = Chunk.chunkStatus.TO_DRAW;
+                if (!chunkss.Contains(chunkName)) chunkss.Add(chunkName);
+
+
+            }
+           
+            /*count++;
+            if (count > 2000)
+            {
+
+                count = 0;
+                yield return null;
+
+            }*/
+
+        }
+       /* foreach (string name in chunkss)
+        {
+            Chunk chunk;
+            if(chunks.TryGetValue(name, out chunk))
+            {
+                chunk.DrawChunk(chunkSize);
+                yield return null;
+            }
+        }*/
+
+
+
+    }
+
     void GenerateBlockTypes()
     {
         BlockType air = new BlockType("air", true, true, true);
@@ -274,6 +343,19 @@ public class World : MonoBehaviour
         water.sideUV = setBlockTypeUV("water");
         water.GenerateBlockUVs();
         blockTypes.Add(BlockType.Type.WATER, water);
+        
+        BlockType log_oak = new BlockType("log_oak", false, false, false);
+        log_oak.topUV = setBlockTypeUV("log_oak");
+        log_oak.sideUV = setBlockTypeUV("log_oak_side");
+        log_oak.bottomUV = setBlockTypeUV("log_oak");
+        log_oak.GenerateBlockUVs();
+        blockTypes.Add(BlockType.Type.LOG_OAK, log_oak);
+        
+        BlockType oak_leaves = new BlockType("oak_leaves", false, true, true);
+        oak_leaves.sideUV = setBlockTypeUV("oak_leaves");
+        oak_leaves.GenerateBlockUVs();
+        blockTypes.Add(BlockType.Type.OAK_LEAVES, oak_leaves);
+
     }
 
     Vector2[] setBlockTypeUV (string name = null)
@@ -321,4 +403,26 @@ public class World : MonoBehaviour
         currentPlayerPosition.x = Mathf.Floor(player.transform.position.x / 16);
         currentPlayerPosition.y = Mathf.Floor(player.transform.position.z / 16);
     }
+}
+
+public class VoxelMod {
+
+    public Vector3 position,chunkPos;
+    public BlockType type;
+
+    public VoxelMod () {
+
+        position = new Vector3();
+        type = World.blockTypes[BlockType.Type.AIR];
+
+    }
+
+    public VoxelMod (Vector3 _position, BlockType _type,Vector3 _chunkPos) {
+
+        position = _position;
+        chunkPos = _chunkPos;
+        type = _type;
+
+    }
+
 }

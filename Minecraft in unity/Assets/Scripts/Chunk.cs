@@ -54,7 +54,13 @@ public class Chunk
                     float worldX = x + chunkObject.transform.position.x;
                     float worldY = y + chunkObject.transform.position.y;
                     float worldZ = z + chunkObject.transform.position.z;
-                    BlockType biomeBlock = biome.GenerateTerrain(worldX, worldY, worldZ);
+                    
+                    //Terrain Pass
+                    BlockType biomeBlock = biome.GenerateTerrain(worldX, worldY, worldZ, chunkObject.transform.position);
+                    
+                    chunkBlocks[x, y, z] = new Block(biomeBlock, this, new Vector3(x, y, z));
+                    //TreePass
+                     //Tree.GetTreeType(new Vector3(worldX, worldY, worldZ), ref biomeBlock);
                     chunkBlocks[x, y, z] = new Block(biomeBlock, this, new Vector3(x, y, z));
 
                     if (biomeBlock == World.blockTypes[BlockType.Type.AIR])
@@ -118,7 +124,11 @@ public class Chunk
     public void DrawChunk(int chunkSize)
     {
         VertexIndex = 0;
-
+        vertices.Clear();
+        triangles.Clear();
+        transparentTriangles.Clear();
+        waterTriangles.Clear();
+        uvs.Clear();
         for (int z = 0; z < chunkSize; z++)
         {
             for (int y = 0; y < chunkSize; y++)
@@ -135,7 +145,7 @@ public class Chunk
         this.status = chunkStatus.DRAWN;
     }
 
-    private void RedrawChunk(int chunkSize)
+    public void RedrawChunk(int chunkSize)
     {
         vertices = new List<Vector3>();
         triangles = new List<int>();
@@ -213,13 +223,14 @@ public class Chunk
 
     public void ChangeBlockType(Vector3 blockPosition, BlockType blockType)
     {
+    //    Debug.Log();
         if (blockPosition.x >= World.chunkSize || blockPosition.x < 0 ||
             blockPosition.y >= World.chunkSize || blockPosition.y < 0 ||
             blockPosition.z >= World.chunkSize || blockPosition.z < 0)
         {
             return;
         }
-
+      //  Debug.Log("test");
         Block block = chunkBlocks[(int) blockPosition.x, (int) blockPosition.y, (int) blockPosition.z];
         if (block.GetBlockType() == World.blockTypes[BlockType.Type.BEDROCK] ||
             block.GetBlockType() == World.blockTypes[BlockType.Type.WATER]) return;
@@ -233,6 +244,8 @@ public class Chunk
         if (blockPosition.z == 0) RedrawNeighbourChunk(new Vector3(0,0,-16));
         if (blockPosition.z == World.chunkSize - 1) RedrawNeighbourChunk(new Vector3(0, 0,16));
     }
+    
+
     public BlockType.Type[,,] GetBlockTypes()
     {
         var arraySize = chunkBlocks.GetLength(0);

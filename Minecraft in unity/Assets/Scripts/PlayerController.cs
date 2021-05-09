@@ -59,7 +59,7 @@ public class PlayerController : MonoBehaviour
         {
             Vector3 blockPos = hit.point + hit.normal/ 2.0f;
             Vector3 chunkPos = hit.transform.position;
-            if(Mathf.Round(this.transform.position.x) == Mathf.Round(blockPos.x)&&Mathf.Round(this.transform.position.y) == Mathf.Round(blockPos.y)&&Mathf.Round(this.transform.position.x) == Mathf.Round(blockPos.x)) return;
+          //  if(Mathf.Round(this.transform.position.x) == Mathf.Round(blockPos.x)&&Mathf.Round(this.transform.position.y) == Mathf.Round(blockPos.y)&&Mathf.Round(this.transform.position.x) == Mathf.Round(blockPos.x)) return;
             int blockPosX =  (int)(Mathf.Round(blockPos.x - chunkPos.x));
             int blockPosY =  (int)(Mathf.Round(blockPos.y - chunkPos.y));
             int blockPosZ =  (int)(Mathf.Round(blockPos.z - chunkPos.z));
@@ -96,7 +96,7 @@ public class PlayerController : MonoBehaviour
         Controls.Gameplay.Disable();
     }
 
-    private void ValidatePositions(Vector3 normal, ref Vector3 blockPos, ref Vector3 chunkPos)
+    public  static void ValidatePositions(Vector3 normal, ref Vector3 blockPos, ref Vector3 chunkPos)
     {
         if (normal.x > 0 && blockPos.x >= World.chunkSize)
         {

@@ -60,9 +60,9 @@ public class ChunkUtils
     public static float CalculateBlockProbability(float x,float y,float z,float increment=0.08f)
     {
 
-        x = x * increment + caveOffset;
-        y = y * increment + caveOffset;
-        z = z * increment + caveOffset;
+        x = x * increment + typeOffset;
+        y = y * increment + typeOffset;
+        z = z * increment + typeOffset;
         return PerlinNoise3D(x, y, z);
     }
     static float PerlinNoise3D(float x,float y,float z)
@@ -81,7 +81,7 @@ public class ChunkUtils
     {
         firstLayeroffset = Random.Range(0, 1000);
         secondLayeroffset = Random.Range(0, 1000);
-        caveOffset = Random.Range(0, 1000);
+        typeOffset = Random.Range(0, 1000);
         moistureOffset = Random.Range(0, 1000);
         temperatureOffset = Random.Range(0, 1000);
     }

@@ -8,31 +8,7 @@ public class BlockType
 
     //Wszystkie bloki gry
     //Pamietaj podczas dodawania dodaj rowniez w skrypcie world
-    public enum Type    {AIR,
-
-                        DIRT,
-
-                        WOODEN,
-
-                        GRASS,
-
-                        STONE,
-
-                        COAL_ORE,
-
-                        DIAMOND_ORE,
-
-                        SNOW,
-
-                        SAND,
-
-                        CAVE,
-
-                        GLASS,
-
-                        BEDROCK,
-
-                       WATER};
+    public enum Type    {AIR, DIRT, WOODEN, GRASS, STONE, COAL_ORE, DIAMOND_ORE, SNOW, SAND, CAVE, GLASS, BEDROCK, WATER, LOG_OAK, OAK_LEAVES};
 
     public string name { get; private set; }
     public bool isTransparent { get; private set; }

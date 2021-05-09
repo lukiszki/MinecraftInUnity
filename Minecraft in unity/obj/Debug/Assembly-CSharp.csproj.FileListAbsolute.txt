@@ -1,0 +1,2 @@
+C:\unityprojects\MinecraftInUnity\Minecraft in unity\obj\Debug\Assembly-CSharp.csprojAssemblyReference.cache
+C:\unityprojects\MinecraftInUnity\Minecraft in unity\obj\Debug\Assembly-CSharp.csproj.CoreCompileInputs.cache

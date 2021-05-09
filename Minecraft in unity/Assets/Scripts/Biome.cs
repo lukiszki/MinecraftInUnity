@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿
 using UnityEngine;
+using UnityEngine.UIElements;
 using Random = UnityEngine.Random;
 
 public abstract  class Biome
@@ -13,31 +12,25 @@ public abstract  class Biome
 
     public virtual float waterLayerY { get { return 32f; } }
 
-    private List<Vector3> Trees = new List<Vector3>();
 
     protected float typeProbability;
     protected int generated1stLayerY;
     protected int generated2ndLayerY;
 
-    public virtual BlockType GenerateTerrain(float x, float y,float z)
+    public virtual BlockType GenerateTerrain(float x, float y,float z, Vector3 chunkPos)
     {
+        
+
         GenerateTerrainValues(x,y,z);
         if (y == generated1stLayerY&& y > waterLayerY-1)
         {
-            if (Random.Range(1, 1000) > 990)
-            {
-                Trees.Add(new Vector3(x,y,z));
-                return World.blockTypes[BlockType.Type.WOODEN];
-                
-            }
-            else
-            return GenerateSurface();
+            return GenerateSurface(x, y, z, chunkPos);
         }
         if (y <= 1)
         {
             return GenerateBedrockLayer();
         }
-        if (typeProbability > 0.5f && y < generated1stLayerY - 5)
+        if (typeProbability < 0.4f && y <= generated1stLayerY-5 && y > 4)
         {
             return GenerateCave();
         }
@@ -54,28 +47,33 @@ public abstract  class Biome
             Chunk.waterBlocks.Add(new Vector3(x,y,z));
             return GenerateWaterLayer();
         }
-
-        if (Trees.Contains(new Vector3(x, y-1, z)))
-        {
-            return World.blockTypes[BlockType.Type.WOODEN];
-        }
-        if (Trees.Contains(new Vector3(x, y-2, z)))
-        {
-            return World.blockTypes[BlockType.Type.WOODEN];
-        }
-        if (Trees.Contains(new Vector3(x, y-3, z)))
-        {
-            return World.blockTypes[BlockType.Type.WOODEN];
-        }
-       
-        return World.blockTypes[BlockType.Type.AIR];
         
+        //return Tree.GetTreeType(new Vector3(x, y, z));
+
+       return World.blockTypes[BlockType.Type.AIR];
+
+       //    
+
 
     }
-    protected virtual BlockType GenerateSurface()
+    protected virtual BlockType GenerateSurface(float x,float y,float z, Vector3 chunkPos)
     {
-        
-            return World.blockTypes[BlockType.Type.GRASS];
+
+        if (Mathf.PerlinNoise(x * 0.03f, z * 0.03f) < 0.45f)
+        {
+
+
+            if (Mathf.PerlinNoise(x * 0.3f, z * 0.3f) < 0.2f)
+            {
+
+                if(CheckTree(x,y,z))
+                    Structure.MakeTree(new Vector3(x, y, z), chunkPos, World.modifications, 7, 10, 3);
+                else
+                    return World.blockTypes[BlockType.Type.GRASS];
+            }
+
+        }
+        return World.blockTypes[BlockType.Type.GRASS];
     }
     protected virtual BlockType GenerateCave()
     {
@@ -107,6 +105,18 @@ public abstract  class Biome
          typeProbability = ChunkUtils.CalculateBlockProbability(x, y, z,typeIncrement);
          generated1stLayerY = (int)ChunkUtils.Generate1stLayerHeight(x, z,firstLayerFirstIncrement,firstLayerSecondIncrement);
          generated2ndLayerY = (int)ChunkUtils.Generate2ndLayerHeight(x, z, generated1stLayerY,secondLayerIncrement);
+    }
+    bool CheckTree(float x,float y,float z)
+    {
+        if (Structure.Trees.Contains(new Vector2Int((int)x, (int)z)) ||
+    Structure.Trees.Contains(new Vector2Int((int)x + 1, (int)z)) ||
+    Structure.Trees.Contains(new Vector2Int((int)x, (int)z + 1)) ||
+    Structure.Trees.Contains(new Vector2Int((int)x - 1, (int)z)) ||
+    Structure.Trees.Contains(new Vector2Int((int)x, (int)z + 1)) ||
+    Structure.Trees.Contains(new Vector2Int((int)x - 1, (int)z - 1)) ||
+    Structure.Trees.Contains(new Vector2Int((int)x + 1, (int)z + 1)))
+            return false;
+        else return true;
     }
 
 }

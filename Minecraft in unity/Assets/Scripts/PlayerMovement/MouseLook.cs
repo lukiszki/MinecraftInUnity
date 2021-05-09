@@ -20,7 +20,7 @@ public class MouseLook : MonoBehaviour
     {
         Controls = new PlayerControls();
         playerBody = transform.parent.transform;
-        Cursor.lockState = CursorLockMode.Locked;
+       // Cursor.lockState = CursorLockMode.Locked;
         
         //Camera controls
         /*Controls.Gameplay.ViewUp.performed += ctx => mouseY = ctx.ReadValue<float>()* mouseSensitivity * Time.deltaTime;    

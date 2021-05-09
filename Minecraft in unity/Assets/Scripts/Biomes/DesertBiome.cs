@@ -9,12 +9,12 @@ public class DesertBiome : Biome
 
     public override float waterLayerY { get { return 0; } }
 
-    public override BlockType GenerateTerrain(float x, float y, float z)
+    public override BlockType GenerateTerrain(float x, float y,float z, Vector3 chunkPos)
     {
         GenerateTerrainValues(x, y, z);
         if (y == generated1stLayerY)
         {
-            return GenerateSurface();
+            return GenerateSurface(x,y,z,chunkPos);
         }
         if (y < generated2ndLayerY)
         {
@@ -26,7 +26,7 @@ public class DesertBiome : Biome
         }
         return World.blockTypes[BlockType.Type.AIR];
     }
-    protected override BlockType GenerateSurface()
+    protected override BlockType GenerateSurface(float x, float y, float z, Vector3 chunkPos)
     {
         return World.blockTypes[BlockType.Type.SAND];
     }
