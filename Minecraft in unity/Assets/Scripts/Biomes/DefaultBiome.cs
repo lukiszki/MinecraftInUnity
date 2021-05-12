@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class DefaultBiome : Biome
 {
-    protected override BlockType Generate2ndLayer()
+    protected override BlockType Generate2ndLayer(float y)
     {
-        if (typeProbability < 0.25f)
+        if (diamondProbability < 0.265f&&y<16)
         {
             return World.blockTypes[BlockType.Type.DIAMOND_ORE];
         }
-        else if (typeProbability < 0.35f)
+        else if (coalProbability < 0.35f)
         {
             return World.blockTypes[BlockType.Type.COAL_ORE];
         }

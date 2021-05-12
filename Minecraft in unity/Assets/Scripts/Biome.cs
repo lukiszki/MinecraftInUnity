@@ -6,14 +6,22 @@ using Random = UnityEngine.Random;
 public abstract  class Biome
 {
     public virtual float typeIncrement { get { return 0.08f; } }
+
+    public virtual float coalIncrement { get { return 0.4f; } }
+
+    public virtual float diamondIncrement { get { return 0.2f; } }
+
+
     public virtual float firstLayerFirstIncrement { get { return 0.02f; } }
     public virtual float firstLayerSecondIncrement { get { return 0.1f; } }
     public virtual float secondLayerIncrement { get { return 0.01f; } }
 
-    public virtual float waterLayerY { get { return 32f; } }
+    public virtual float waterLayerY { get { return 20; } }
 
 
-    protected float typeProbability;
+    protected float diamondProbability;
+    protected float coalProbability;
+    protected float caveProbability;
     protected int generated1stLayerY;
     protected int generated2ndLayerY;
 
@@ -30,13 +38,13 @@ public abstract  class Biome
         {
             return GenerateBedrockLayer();
         }
-        if (typeProbability < 0.4f && y <= generated1stLayerY-5 && y > 4)
+        if (caveProbability < 0.02f && caveProbability > -0.02f&& y <= generated1stLayerY && y > 4)
         {
             return GenerateCave();
         }
         if( y < generated2ndLayerY && y > 1)
         {
-            return Generate2ndLayer();
+            return Generate2ndLayer(y);
         }
         if( y < generated1stLayerY)
         {
@@ -63,7 +71,7 @@ public abstract  class Biome
         {
 
 
-            if (Mathf.PerlinNoise(x * 0.3f, z * 0.3f) < 0.2f)
+            if (Mathf.PerlinNoise(x * 0.3f, z * 0.3f) < 0.15f)
             {
 
                 if(CheckTree(x,y,z))
@@ -82,7 +90,7 @@ public abstract  class Biome
 
 
 
-    protected virtual BlockType Generate2ndLayer()
+    protected virtual BlockType Generate2ndLayer(float y)
     {
         return World.blockTypes[BlockType.Type.STONE];
     }
@@ -102,8 +110,10 @@ public abstract  class Biome
 
     protected virtual void GenerateTerrainValues(float x,float y,float z)
     {
-         typeProbability = ChunkUtils.CalculateBlockProbability(x, y, z,typeIncrement);
-         generated1stLayerY = (int)ChunkUtils.Generate1stLayerHeight(x, z,firstLayerFirstIncrement,firstLayerSecondIncrement);
+         coalProbability = ChunkUtils.CalculateBlockProbability(x, y, z,100, coalIncrement);
+         diamondProbability = ChunkUtils.CalculateBlockProbability(x, y, z,-100, diamondIncrement);
+        caveProbability = ChunkUtils.CalculateCaveProbability(x, y, z,typeIncrement);
+        generated1stLayerY = (int)ChunkUtils.Generate1stLayerHeight(x, z,firstLayerFirstIncrement,firstLayerSecondIncrement);
          generated2ndLayerY = (int)ChunkUtils.Generate2ndLayerHeight(x, z, generated1stLayerY,secondLayerIncrement);
     }
     bool CheckTree(float x,float y,float z)

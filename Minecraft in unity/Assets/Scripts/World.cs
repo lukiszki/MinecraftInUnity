@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Linq;
 using System.Threading;
 using UnityEngine.Assertions.Must;
+using System;
 
 public class World : MonoBehaviour
 {
@@ -67,8 +68,8 @@ public class World : MonoBehaviour
         ChunkUtils.GenerateRandomOffset();
         GenerateBlockTypes();
 
-        GenerateWorld();
-        StartCoroutine(BuildWorld());
+        StartCoroutine(GenerateWorld(false));
+        StartCoroutine(BuildWorld(true));
 
     }
     private void Update()
@@ -78,10 +79,10 @@ public class World : MonoBehaviour
         if (lastPlayerPosition != currentPlayerPosition)
         {
             lastPlayerPosition = currentPlayerPosition;
-            if (modifications.Count > 0)
-                ApplyModifications();
-            GenerateWorld();
-            StartCoroutine(BuildWorld());
+            // if (modifications.Count > 0)
+            //ApplyModifications();
+            StartCoroutine(GenerateWorld(true));
+            StartCoroutine(BuildWorld(true));
 
         }
 
@@ -115,13 +116,13 @@ public class World : MonoBehaviour
     }
 
     //corutyna generuje kolumny chunkow
-    IEnumerator BuildWorld()
+    IEnumerator BuildWorld(bool isAnimating)
     {
         foreach (Chunk chunk in chunks.Values.ToList())
         {
             if (chunk.status == Chunk.chunkStatus.TO_DRAW)
             {
-                chunk.DrawChunk(chunkSize);
+                chunk.DrawChunk(chunkSize, isAnimating);
             }
 
             yield return null;
@@ -137,8 +138,7 @@ public class World : MonoBehaviour
         }
 
     }
-
-    void GenerateWorld()
+    IEnumerator GenerateWorld(bool isUpdating)
     {
         for (int z = -worldRadius + (int)currentPlayerPosition.y - 1; z <= worldRadius + (int)currentPlayerPosition.y + 1; z++)
         {
@@ -179,10 +179,12 @@ public class World : MonoBehaviour
                         chunks.Add(chunkName, chunk);
 
                     }
-
+                    if (isUpdating)
+                        yield return null;
                 }
             }
-        }            
+        }
+        yield return null;
 
         
 

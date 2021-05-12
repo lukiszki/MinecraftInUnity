@@ -417,7 +417,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.01
-  far clip plane: 1000
+  far clip plane: 100000
   field of view: 90
   orthographic: 0
   orthographic size: 5
@@ -1079,8 +1079,8 @@ MonoBehaviour:
   - {fileID: 2800000, guid: a21371709753b254bafa9bc784d24eaa, type: 3}
   - {fileID: 2800000, guid: b3f0034dd3bba5c46a7047b0c57b17a2, type: 3}
   - {fileID: 2800000, guid: 588b6dc435ea70243956ccb82df67d77, type: 3}
-  columnHeight: 4
-  worldRadius: 4
+  columnHeight: 3
+  worldRadius: 8
 --- !u!4 &1189003992
 Transform:
   m_ObjectHideFlags: 0
@@ -1411,7 +1411,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 5
-  gravity: -30
+  gravity: 30
   jumpHeight: 1.7
   groundCheck: {fileID: 1462340193}
   groundDistance: 0.3

@@ -18,7 +18,7 @@ public class DesertBiome : Biome
         }
         if (y < generated2ndLayerY)
         {
-            return Generate2ndLayer();
+            return Generate2ndLayer(y);
         }
         if (y < generated1stLayerY)
         {

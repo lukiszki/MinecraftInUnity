@@ -121,7 +121,7 @@ public class Chunk
         }
     }
 
-    public void DrawChunk(int chunkSize)
+    public void DrawChunk(int chunkSize, bool isAnimating)
     {
         VertexIndex = 0;
         vertices.Clear();
@@ -141,6 +141,9 @@ public class Chunk
         }
 
         CombineSides();
+       // if(isAnimating)
+      //  chunkObject.AddComponent<ChunkAnimation>();
+
 
         this.status = chunkStatus.DRAWN;
     }
@@ -152,7 +155,7 @@ public class Chunk
         transparentTriangles = new List<int>();
         waterTriangles = new List<int>();
         uvs = new List<Vector2>();
-        DrawChunk(chunkSize);
+        DrawChunk(chunkSize, false);
 
     }
 
