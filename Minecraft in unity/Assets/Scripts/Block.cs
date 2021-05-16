@@ -10,6 +10,15 @@ public class Block
     BlockType blockType;
     Chunk chunkParent;
     Vector3 blockPosition;
+
+
+    //lightning values
+    public static float minLightLevel = 0.15f;
+    public static float maxLightLevel = 0.8f;
+
+    public static float lightFallof = 0.08f;
+
+    public float globalLightPrecentage=1;
     static int[] triangles = new int[] { 3, 1, 0, 3, 2, 1 };
 
 
@@ -35,6 +44,17 @@ public class Block
                                                 vertices[5], vertices[4] };
     static Vector3[] bottomVerticies = new Vector3[] { vertices[0], vertices[1],
                                                 vertices[2], vertices[3] };
+
+    public static readonly Vector3[] faceChecks = new Vector3[6] {
+
+        new Vector3(0.0f, 0.0f, -1.0f),
+        new Vector3(0.0f, 0.0f, 1.0f),
+        new Vector3(0.0f, 1.0f, 0.0f),
+        new Vector3(0.0f, -1.0f, 0.0f),
+        new Vector3(-1.0f, 0.0f, 0.0f),
+        new Vector3(1.0f, 0.0f, 0.0f)
+
+    };
 
     public Block(BlockType blockType, Chunk chunkParent, Vector3 blockPosition)
     {
@@ -138,7 +158,14 @@ public class Block
     //fukcja generuje wartosci dla mesha
     void GenerateBlockSide(BlockSide side)
     {
-        switch(side)
+        //Debug.Log(globalLightPrecentage);
+        chunkParent.colors.Add(new Color(0, 0, 0, globalLightPrecentage));
+        chunkParent.colors.Add(new Color(0, 0, 0, globalLightPrecentage));
+        chunkParent.colors.Add(new Color(0, 0, 0, globalLightPrecentage));
+        chunkParent.colors.Add(new Color(0, 0, 0, globalLightPrecentage));
+
+
+        switch (side)
         {
             case BlockSide.FRONT:
                 foreach (Vector3 vertex in frontVerticies)
@@ -175,17 +202,22 @@ public class Block
                 {
                     chunkParent.vertices.Add((blockPosition+ vertex));
                 }
-                break;          
+                break;    
+
+
         }
 
         foreach (Vector2 blockUV in blockType.GetBlockUVs(side))
         {
             chunkParent.uvs.Add(blockUV);
+
         }
 
+
+      
         foreach (int triangle in triangles)
         {
-            if(this.blockType.isLiquid())
+            if (this.blockType.isLiquid())
                 chunkParent.waterTriangles.Add(chunkParent.VertexIndex + triangle);
             
             else if (this.blockType.isTransparent||this.blockType.isTransluent)
@@ -205,6 +237,7 @@ public class Block
 
     public void SetBlockType(BlockType type)
     {
+        
         this.blockType = type;
     }
 

@@ -80,7 +80,7 @@ public class ChunkUtils
         y = y * increment + typeOffset;
         z = z * increment + typeOffset;*/
 
-        return noise.GetPerlinFractal(x *2, y*2.5f , z *2);
+        return noise.GetSimplex(x *5, y*5 , z *5);
     }
     static float PerlinNoise3D(float x,float y,float z)
     {

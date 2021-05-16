@@ -59,7 +59,6 @@ public static class Structure
 
     private static int ValidatePos(int pos, ref int offset)
     {
-        
         if (pos >= World.chunkSize)
         {
             offset++;

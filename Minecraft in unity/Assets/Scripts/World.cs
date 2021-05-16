@@ -2,12 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using System.Threading;
-using UnityEngine.Assertions.Must;
-using System;
-
 public class World : MonoBehaviour
 {
+    [Range(0f, 1f)]
+    public float globalLightLevel;
+
+
+    public Color day;
+    public Color night;
+
+
+    [SerializeField]
+    private Camera camera;
+
+
+
     public Texture2D[] atlasTextures;
     public Texture2D[] atlasTransparentTextures;
     public static Dictionary<string, Rect> atlasDictionary = new Dictionary<string, Rect>();
@@ -43,8 +52,9 @@ public class World : MonoBehaviour
 
     void Start()
     {
+
         Texture2D atlas = GetTextureAtlas();
-        Material material = new Material(Shader.Find("Standard"));
+        Material material = new Material(Shader.Find("Minecraft/Blocks"));
         atlas.filterMode = FilterMode.Point;
         material.mainTexture = atlas; 
         /*material.SetTexture("_BaseColorMap", atlas);*/
@@ -74,13 +84,19 @@ public class World : MonoBehaviour
     }
     private void Update()
     {
+        if (player.activeInHierarchy)
+           camera.backgroundColor = Color.Lerp(night, day, globalLightLevel);
+
+        Shader.SetGlobalFloat("GlobalLightLevel", globalLightLevel);
+        Shader.SetGlobalFloat("minGlobalLightLevel", Block.minLightLevel);
+        Shader.SetGlobalFloat("maxGlobalLightLevel", Block.maxLightLevel);
+
         UpdatePlayerPosition();
 
         if (lastPlayerPosition != currentPlayerPosition)
         {
             lastPlayerPosition = currentPlayerPosition;
-            // if (modifications.Count > 0)
-            //ApplyModifications();
+             
             StartCoroutine(GenerateWorld(true));
             StartCoroutine(BuildWorld(true));
 
@@ -130,10 +146,11 @@ public class World : MonoBehaviour
 
         if (!player.activeInHierarchy)
         { 
+            
             player.SetActive(true);
 
 
-          ApplyModifications();
+          
 
         }
 
@@ -179,11 +196,14 @@ public class World : MonoBehaviour
                         chunks.Add(chunkName, chunk);
 
                     }
-                    if (isUpdating)
-                        yield return null;
+                   
                 }
+                if (isUpdating)
+                    yield return null;
             }
         }
+        if (modifications.Count > 0)
+            ApplyModifications();
         yield return null;
 
         
@@ -230,7 +250,7 @@ public class World : MonoBehaviour
 
     void ApplyModifications()
     {
-        List<string> chunkss = new List<string>();
+
         int count = 0;
         while (modifications.Count > 0)
         {
@@ -245,30 +265,12 @@ public class World : MonoBehaviour
                 chunk.chunkBlocks[(int) v.position.x, (int) v.position.y, (int) v.position.z]  = new Block(v.type,chunk, v.position);
                 //chunk.DrawChunk(chunkSize);
                 chunk.status = Chunk.chunkStatus.TO_DRAW;
-                if (!chunkss.Contains(chunkName)) chunkss.Add(chunkName);
-
-
             }
            
-            /*count++;
-            if (count > 2000)
-            {
-
-                count = 0;
-                yield return null;
-
-            }*/
+          
 
         }
-       /* foreach (string name in chunkss)
-        {
-            Chunk chunk;
-            if(chunks.TryGetValue(name, out chunk))
-            {
-                chunk.DrawChunk(chunkSize);
-                yield return null;
-            }
-        }*/
+        StartCoroutine(GenerateWorld(false));
 
 
 
@@ -276,12 +278,12 @@ public class World : MonoBehaviour
 
     void GenerateBlockTypes()
     {
-        BlockType air = new BlockType("air", true, true, true);
+        BlockType air = new BlockType("air", true, true, true,1);
         air.sideUV = setBlockTypeUV();
         air.GenerateBlockUVs();
         blockTypes.Add(BlockType.Type.AIR,air);
 
-        BlockType cave = new BlockType("cave", true, true, true);
+        BlockType cave = new BlockType("cave", true, true, true,1);
         cave.sideUV = setBlockTypeUV();
         cave.GenerateBlockUVs();
         blockTypes.Add(BlockType.Type.CAVE, cave);
@@ -331,7 +333,7 @@ public class World : MonoBehaviour
         sand.GenerateBlockUVs();
         blockTypes.Add(BlockType.Type.SAND, sand);
 
-        BlockType glass = new BlockType("glass", false, true, true);
+        BlockType glass = new BlockType("glass", false, true, true,0.8f);
         glass.sideUV = setBlockTypeUV("glass");
         glass.GenerateBlockUVs();
         blockTypes.Add(BlockType.Type.GLASS, glass);
@@ -341,7 +343,7 @@ public class World : MonoBehaviour
         bedrock.GenerateBlockUVs();
         blockTypes.Add(BlockType.Type.BEDROCK, bedrock);
 
-        BlockType water = new BlockType("water", false, true, true);
+        BlockType water = new BlockType("water", false, true, true,0.7f);
         water.sideUV = setBlockTypeUV("water");
         water.GenerateBlockUVs();
         blockTypes.Add(BlockType.Type.WATER, water);
@@ -353,7 +355,7 @@ public class World : MonoBehaviour
         log_oak.GenerateBlockUVs();
         blockTypes.Add(BlockType.Type.LOG_OAK, log_oak);
         
-        BlockType oak_leaves = new BlockType("oak_leaves", false, true, true);
+        BlockType oak_leaves = new BlockType("oak_leaves", false, true, true, 0.75f);
         oak_leaves.sideUV = setBlockTypeUV("oak_leaves");
         oak_leaves.GenerateBlockUVs();
         blockTypes.Add(BlockType.Type.OAK_LEAVES, oak_leaves);

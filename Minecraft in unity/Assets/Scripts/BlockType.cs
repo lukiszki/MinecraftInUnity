@@ -15,6 +15,8 @@ public class BlockType
     public bool isTransluent { get; private set; }
     public bool everySideSame { get; private set; }
 
+    public float trasparency;
+
     public Type blockType { get; private set; }
 
 
@@ -25,15 +27,16 @@ public class BlockType
     List<Vector2[]> blockUVs = new List<Vector2[]>();
 
 
-    public BlockType (string typeName, bool isTransparent,bool isTransluent, bool everySideSame)
+    public BlockType (string typeName, bool isTransparent,bool isTransluent, bool everySideSame, float _transparency = 0.35f)
     {
         this.name = typeName;
         this.isTransparent = isTransparent;
         this.isTransluent = isTransluent;
         this.everySideSame = everySideSame;
         this.blockType = (Type)Enum.Parse(typeof(Type), typeName.ToUpper());
-      }
-
+        this.trasparency = _transparency;
+    }
+    
     public Vector2[] GetUV (Block.BlockSide side)
     {
         if (everySideSame || (side != Block.BlockSide.TOP && side != Block.BlockSide.BOTTOM))

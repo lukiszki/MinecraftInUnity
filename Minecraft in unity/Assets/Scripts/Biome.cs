@@ -38,7 +38,7 @@ public abstract  class Biome
         {
             return GenerateBedrockLayer();
         }
-        if (caveProbability < 0.02f && caveProbability > -0.02f&& y <= generated1stLayerY && y > 4)
+        if (caveProbability < 0.15f && caveProbability > -0.15f&& y <= generated1stLayerY-2 && y > 4)
         {
             return GenerateCave();
         }
@@ -64,22 +64,22 @@ public abstract  class Biome
 
 
     }
+
     protected virtual BlockType GenerateSurface(float x,float y,float z, Vector3 chunkPos)
     {
 
-        if (Mathf.PerlinNoise(x * 0.03f, z * 0.03f) < 0.45f)
+        if (Mathf.PerlinNoise(x * 0.03f, z * 0.03f) < 0.55f)
         {
 
 
-            if (Mathf.PerlinNoise(x * 0.3f, z * 0.3f) < 0.15f)
+            if (Mathf.PerlinNoise(x * 0.45f, z * 0.45f) < 0.13f)
             {
 
-                if(CheckTree(x,y,z))
+                if(CheckTree(x,y,z)) 
                     Structure.MakeTree(new Vector3(x, y, z), chunkPos, World.modifications, 7, 10, 3);
                 else
                     return World.blockTypes[BlockType.Type.GRASS];
             }
-
         }
         return World.blockTypes[BlockType.Type.GRASS];
     }

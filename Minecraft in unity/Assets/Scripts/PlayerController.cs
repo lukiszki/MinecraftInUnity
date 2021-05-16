@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.Build;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -17,11 +18,19 @@ public class PlayerController : MonoBehaviour
     private World _world;
     private GameObject player;
     private GameObject panel;
-    
+
+    [SerializeField]
+    private GameObject selectionCube;
+
+
     [SerializeField]
     private GameObject ParticleSystem;
 
     private PlayerControls Controls;
+
+    private GameObject wire;
+
+    private Vector3 oldPos = new Vector3(0,0,0);
     
     private void Awake()
     {
@@ -32,6 +41,7 @@ public class PlayerController : MonoBehaviour
         Controls = new PlayerControls();
         Controls.Gameplay.Destroy.performed += ctx => RemoveBlock();
         Controls.Gameplay.PlaceBlock.performed += ctx => BuildBlock();
+        
     }
 
     private void Update()
@@ -49,7 +59,8 @@ public class PlayerController : MonoBehaviour
         {
             panel.SetActive(false);
         }
-        
+
+        SelectBlock();
     }
 
     private void BuildBlock()
@@ -69,6 +80,22 @@ public class PlayerController : MonoBehaviour
             GameObject particle = Instantiate(ParticleSystem, blockPos, Quaternion.identity);
             Destroy(particle,2);
         }
+    }
+    private void SelectBlock()
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(_camera.transform.position, _camera.transform.forward, out hit, _interactionRange, ~_maskToIgnore))
+        {
+            Vector3 blockPos = hit.point - hit.normal / 2.0f;
+            if (new Vector3(Mathf.Round(blockPos.x), Mathf.Round(blockPos.y), Mathf.Round(blockPos.z)) != oldPos)
+            {
+                Destroy(wire);
+                wire = Instantiate(selectionCube, new Vector3(Mathf.Round(blockPos.x), Mathf.Round(blockPos.y), Mathf.Round(blockPos.z)), Quaternion.identity);
+                oldPos = new Vector3(Mathf.Round(blockPos.x), Mathf.Round(blockPos.y), Mathf.Round(blockPos.z));
+            }
+        }
+        else Destroy(wire);
+        
     }
     
     private void RemoveBlock()
