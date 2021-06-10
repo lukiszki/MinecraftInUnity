@@ -137,6 +137,14 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Scroll"",
+                    ""type"": ""Value"",
+                    ""id"": ""c26ae133-4baa-4445-ad57-192f7f1e2959"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -491,6 +499,16 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""action"": ""PlaceBlock"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                    ""name"": """",
+                    ""id"": ""46e3ec58-7c0b-425a-b782-27841eeac671"",
+                    ""path"": ""<Mouse>/scroll"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Scroll"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -514,6 +532,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         m_Gameplay_View = m_Gameplay.FindAction("View", throwIfNotFound: true);
         m_Gameplay_Movement = m_Gameplay.FindAction("Movement", throwIfNotFound: true);
         m_Gameplay_PlaceBlock = m_Gameplay.FindAction("PlaceBlock", throwIfNotFound: true);
+        m_Gameplay_Scroll = m_Gameplay.FindAction("Scroll", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -578,6 +597,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     private readonly InputAction m_Gameplay_View;
     private readonly InputAction m_Gameplay_Movement;
     private readonly InputAction m_Gameplay_PlaceBlock;
+    private readonly InputAction m_Gameplay_Scroll;
     public struct GameplayActions
     {
         private @PlayerControls m_Wrapper;
@@ -597,6 +617,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         public InputAction @View => m_Wrapper.m_Gameplay_View;
         public InputAction @Movement => m_Wrapper.m_Gameplay_Movement;
         public InputAction @PlaceBlock => m_Wrapper.m_Gameplay_PlaceBlock;
+        public InputAction @Scroll => m_Wrapper.m_Gameplay_Scroll;
         public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -651,6 +672,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @PlaceBlock.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnPlaceBlock;
                 @PlaceBlock.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnPlaceBlock;
                 @PlaceBlock.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnPlaceBlock;
+                @Scroll.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnScroll;
+                @Scroll.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnScroll;
+                @Scroll.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnScroll;
             }
             m_Wrapper.m_GameplayActionsCallbackInterface = instance;
             if (instance != null)
@@ -700,6 +724,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @PlaceBlock.started += instance.OnPlaceBlock;
                 @PlaceBlock.performed += instance.OnPlaceBlock;
                 @PlaceBlock.canceled += instance.OnPlaceBlock;
+                @Scroll.started += instance.OnScroll;
+                @Scroll.performed += instance.OnScroll;
+                @Scroll.canceled += instance.OnScroll;
             }
         }
     }
@@ -721,5 +748,6 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         void OnView(InputAction.CallbackContext context);
         void OnMovement(InputAction.CallbackContext context);
         void OnPlaceBlock(InputAction.CallbackContext context);
+        void OnScroll(InputAction.CallbackContext context);
     }
 }

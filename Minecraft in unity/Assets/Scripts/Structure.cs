@@ -47,6 +47,9 @@ public static class Structure
                 }
             }
         }
+        xOffset = 0;
+        yOffset = 0;
+        zOffset = 0;
 
         //PIEŃ DRZEWA
         for (int i = 0; i < height; i++)
@@ -54,6 +57,7 @@ public static class Structure
                 new Vector3(localPosition.x, ValidatePos((int)localPosition.y + i, ref yOffset), localPosition.z),
                 World.blockTypes[BlockType.Type.LOG_OAK], SetChunk(chunkPos, new Vector3(xOffset, yOffset, zOffset))));
         Trees.Add(new Vector2Int((int)position.x, (int)position.z));
+        //Debug.Log(yOffset);
 
     }
 
@@ -75,6 +79,13 @@ public static class Structure
 
     private static Vector3 SetChunk(Vector3 chPos, Vector3 offsets)
     {
+        if (offsets == new Vector3(0, 0, 0))
+            return chPos;
+        
+        if(offsets.y == 0)
+            return chPos + new Vector3(World.chunkSize * offsets.x, 0,
+           World.chunkSize * offsets.z);
+
         return chPos + new Vector3(World.chunkSize * offsets.x, World.chunkSize * offsets.y,
             World.chunkSize * offsets.z);
 

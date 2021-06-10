@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEditor.Build;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField]
-    private BlockType.Type selectedBlockType;
+    public BlockType.Type selectedBlockType;
     [SerializeField]
     private LayerMask _maskToIgnore;
     [SerializeField]
@@ -18,6 +13,7 @@ public class PlayerController : MonoBehaviour
     private World _world;
     private GameObject player;
     private GameObject panel;
+
 
     [SerializeField]
     private GameObject selectionCube;

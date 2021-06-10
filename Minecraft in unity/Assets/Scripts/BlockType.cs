@@ -20,6 +20,8 @@ public class BlockType
     public Type blockType { get; private set; }
 
 
+    public Sprite icon;
+
     public Vector2[] topUV{ private get; set; }
     public Vector2[] sideUV{ private get; set; }
     public Vector2[] bottomUV{ private get; set; }
@@ -35,8 +37,10 @@ public class BlockType
         this.everySideSame = everySideSame;
         this.blockType = (Type)Enum.Parse(typeof(Type), typeName.ToUpper());
         this.trasparency = _transparency;
+        icon = Sprite.Create(new Texture2D(16, 16), new Rect(-8, -8, 16, 16), new Vector2(0, 0));
     }
     
+
     public Vector2[] GetUV (Block.BlockSide side)
     {
         if (everySideSame || (side != Block.BlockSide.TOP && side != Block.BlockSide.BOTTOM))

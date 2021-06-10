@@ -19,6 +19,9 @@ public class World : MonoBehaviour
 
     public Texture2D[] atlasTextures;
     public Texture2D[] atlasTransparentTextures;
+    public Sprite[] icons;
+
+    static Dictionary<string, Sprite> iconsDictionary = new Dictionary<string, Sprite>();
     public static Dictionary<string, Rect> atlasDictionary = new Dictionary<string, Rect>();
     public static Dictionary<string, Chunk> chunks = new Dictionary<string, Chunk>();
     public static Dictionary<string, Chunk> modChunks = new Dictionary<string, Chunk>();
@@ -48,15 +51,13 @@ public class World : MonoBehaviour
         player.SetActive(false);
         UpdatePlayerPosition();
         _manager = GameObject.Find("GameManager").GetComponent<SaveManager>();
-    }
 
-    void Start()
-    {
 
         Texture2D atlas = GetTextureAtlas();
+
         Material material = new Material(Shader.Find("Minecraft/Blocks"));
         atlas.filterMode = FilterMode.Point;
-        material.mainTexture = atlas; 
+        material.mainTexture = atlas;
         /*material.SetTexture("_BaseColorMap", atlas);*/
         material.SetFloat("_Metallic", 0f);
         material.SetFloat("_Glossiness", 0f);
@@ -65,18 +66,25 @@ public class World : MonoBehaviour
         Texture2D transparentAtlas = GetTextureAtlas(true);
         transparentAtlas.filterMode = FilterMode.Point;
 
-        Material transparentMaterial = new Material(Shader.Find("Unlit/Transparent"));
+        Material transparentMaterial = new Material(Shader.Find("Minecraft/Blocks"));
         transparentAtlas.alphaIsTransparency = true;
         //player.SetActive(false);
 
         transparentMaterial.mainTexture = transparentAtlas;
         blockMaterial[1] = transparentMaterial;
 
+        GenerateBlockTypes();
+
+    }
+
+    void Start()
+    {
+
+
 
        Application.targetFrameRate = 70;
 
         ChunkUtils.GenerateRandomOffset();
-        GenerateBlockTypes();
 
         StartCoroutine(GenerateWorld(false));
         StartCoroutine(BuildWorld(true));
@@ -212,6 +220,7 @@ public class World : MonoBehaviour
 
     public void GenerateLoadedWorld(List<ChunkData> chunksData)
     {
+        StopAllCoroutines();
         foreach (ChunkData data in chunksData)
         {
             Debug.Log(data.Name);
@@ -246,6 +255,8 @@ public class World : MonoBehaviour
                 }
             }
         }
+        StartCoroutine(GenerateWorld(false));
+
     }
 
     void ApplyModifications()
@@ -270,11 +281,12 @@ public class World : MonoBehaviour
           
 
         }
-        StartCoroutine(GenerateWorld(false));
+        StartCoroutine(GenerateWorld(true));
 
 
 
     }
+
 
     void GenerateBlockTypes()
     {
@@ -291,6 +303,7 @@ public class World : MonoBehaviour
         BlockType dirt = new BlockType("dirt",false,false,true);
         dirt.sideUV = setBlockTypeUV("dirt");
         dirt.GenerateBlockUVs();
+        dirt.icon = GetIcon("dirt");
         blockTypes.Add(BlockType.Type.DIRT, dirt);
 
         
@@ -298,49 +311,60 @@ public class World : MonoBehaviour
         BlockType wooden = new BlockType("wooden", false, false, true);
         wooden.sideUV = setBlockTypeUV("wooden");
         wooden.GenerateBlockUVs();
+        wooden.icon = GetIcon("wooden");
         blockTypes.Add(BlockType.Type.WOODEN, wooden);
 
         BlockType grass = new BlockType("grass", false, false, false);
         grass.topUV = setBlockTypeUV("grass");
         grass.sideUV = setBlockTypeUV("grass_side");
         grass.bottomUV = setBlockTypeUV("dirt");
+        grass.icon = GetIcon("grass");
         grass.GenerateBlockUVs();
+        wooden.icon = GetIcon("wooden");
+
         blockTypes.Add(BlockType.Type.GRASS, grass);
 
         BlockType stone = new BlockType("stone", false, false, true);
         stone.sideUV = setBlockTypeUV("stone");
         stone.GenerateBlockUVs();
+        stone.icon = GetIcon("stone");
         blockTypes.Add(BlockType.Type.STONE, stone);
 
 
         BlockType coal_ore = new BlockType("coal_ore", false, false, true);
         coal_ore.sideUV = setBlockTypeUV("coal_ore");
         coal_ore.GenerateBlockUVs();
+        coal_ore.icon = GetIcon("coal_ore");
         blockTypes.Add(BlockType.Type.COAL_ORE,coal_ore);
 
         BlockType diamond_ore = new BlockType("diamond_ore", false, false, true);
         diamond_ore.sideUV = setBlockTypeUV("diamond_ore");
         diamond_ore.GenerateBlockUVs();
+        diamond_ore.icon = GetIcon("diamond_ore");
         blockTypes.Add(BlockType.Type.DIAMOND_ORE, diamond_ore);
 
         BlockType snow = new BlockType("snow", false, false, true);
         snow.sideUV = setBlockTypeUV("snow");
         snow.GenerateBlockUVs();
+        snow.icon = GetIcon("snow");
         blockTypes.Add(BlockType.Type.SNOW, snow);
 
         BlockType sand = new BlockType("sand", false, false, true);
         sand.sideUV = setBlockTypeUV("sand");
         sand.GenerateBlockUVs();
+        sand.icon = GetIcon("sand");
         blockTypes.Add(BlockType.Type.SAND, sand);
 
         BlockType glass = new BlockType("glass", false, true, true,0.8f);
         glass.sideUV = setBlockTypeUV("glass");
         glass.GenerateBlockUVs();
+        glass.icon = GetIcon("glass");
         blockTypes.Add(BlockType.Type.GLASS, glass);
 
         BlockType bedrock = new BlockType("bedrock", false, false, true);
         bedrock.sideUV = setBlockTypeUV("bedrock");
         bedrock.GenerateBlockUVs();
+        bedrock.icon = GetIcon("bedrock");
         blockTypes.Add(BlockType.Type.BEDROCK, bedrock);
 
         BlockType water = new BlockType("water", false, true, true,0.7f);
@@ -353,13 +377,24 @@ public class World : MonoBehaviour
         log_oak.sideUV = setBlockTypeUV("log_oak_side");
         log_oak.bottomUV = setBlockTypeUV("log_oak");
         log_oak.GenerateBlockUVs();
+        log_oak.icon = GetIcon("log_oak");
         blockTypes.Add(BlockType.Type.LOG_OAK, log_oak);
         
         BlockType oak_leaves = new BlockType("oak_leaves", false, true, true, 0.75f);
         oak_leaves.sideUV = setBlockTypeUV("oak_leaves");
         oak_leaves.GenerateBlockUVs();
+        oak_leaves.icon = GetIcon("oak_leaves");
         blockTypes.Add(BlockType.Type.OAK_LEAVES, oak_leaves);
 
+    }
+    Sprite GetIcon(string name)
+    {
+        foreach(Sprite icon in icons)
+        {
+            if (icon.name == name + "_icon")
+                return icon;
+        }
+        return Sprite.Create(new Texture2D(16, 16), new Rect(-8, -8, 16, 16), new Vector2(0, 0)); 
     }
 
     Vector2[] setBlockTypeUV (string name = null)

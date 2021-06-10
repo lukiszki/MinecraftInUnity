@@ -42,8 +42,8 @@ public class MouseLook : MonoBehaviour
     void Update()
     {
 
-         mouseX = move.x  * mouseSensitivity * Time.deltaTime;
-         mouseY = move.y * mouseSensitivity * Time.deltaTime;
+         mouseX = move.x  * mouseSensitivity * Mathf.Clamp(Time.deltaTime, 0,0.01f);
+         mouseY = move.y * mouseSensitivity * Mathf.Clamp(Time.deltaTime, 0, 0.01f);
         
 
         xRotation -= mouseY;
